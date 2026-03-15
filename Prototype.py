@@ -38,6 +38,16 @@ for row_index, row in enumerate(TestField):
                 TestField[row_index][col_index] = 2
                 break
 
+            if TestField[target_row][target_col] == 3:
+                print("You Cannot here, Enemy is here")
+                TestField[row_index][col_index] = 2
+                break
+
+            if TestField[target_row][target_col] == 4:
+                print("item has been picked up")
+                TestField[target_row][target_col] = 2
+                break
+
             TestField[target_row][target_col] = 2
             print("Player at: ", target_row, target_col)
             break
