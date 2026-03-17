@@ -43,19 +43,30 @@ def checkSpotAvailibility():
 
                         print("Target at: ", target_row, target_col)
 
-                        return target_row, target_col, row_index, col_index
+                        return target_row, target_col, row_index, col_index, "right"
         break
 
-target_row_pos, target_col_pos, previous_row_index, previous_col_index = checkSpotAvailibility()
+#X, Y, Desired_X, Desired_Y Positions, Last variable is the Direction in which the bot moves.
+target_row_pos, target_col_pos, current_row_index, current_col_index, Direction = checkSpotAvailibility()
 
+print(
+      "---------------------------------------------\n"
+      "TargetRowPos: " + str(target_row_pos) + "\n"
+      "TargetColPos: " + str(target_col_pos) + "\n"
+      "PreviousRowIndex: " + str(current_row_index) + "\n"
+      "PreviousDirection: " + str(current_col_index) + "\n"
+      "Direction: " + Direction
+      )
 
-def MoveAction(previous_row, previous_col, row, col):
-        TestField[row][col] = target_col_pos
-        print("-------------------")
-        for tile in TestField:
-            print(tile)
+def MoveAction(current_row, current_col, desired_row, desired_col, Direction):
+        if Direction == "right":
+            TestField[current_row][current_col] = current_col
+            TestField[desired_row][desired_col] = desired_col
+            print("---------------------------------------------")
+            for tile in TestField:
+                print(tile)
 
-MoveAction(previous_row_index, previous_col_index)
+MoveAction(current_row_index, current_col_index, target_row_pos, target_col_pos, Direction)
 
 def EnemyMoveDirection():
     pass
