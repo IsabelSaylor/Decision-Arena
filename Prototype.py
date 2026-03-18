@@ -85,6 +85,23 @@ def checkSpotAvailibility():
 
                         return target_row, target_col, row_index, col_index, Direction
         
+        if Direction == "Left":
+            for row_index, row in enumerate(TestField):
+                for col_index, tile in enumerate(row):
+                    if tile == 2:
+                        print("Player at: ", row_index, col_index)
+
+                        target_row = row_index
+                        target_col = col_index - 1
+
+                        if TestField[target_row][target_col] == 1:
+                            print("Bot Cannot Move here! It Retries.")
+                            continue
+
+                        print("Target at: ", target_row, target_col)
+
+                        return target_row, target_col, row_index, col_index, Direction
+        
 
 #X, Y, Desired_X, Desired_Y Positions, Last variable is the Direction in which the bot moves.
 target_row_pos, target_col_pos, current_row_index, current_col_index, Direction = checkSpotAvailibility()
@@ -123,6 +140,10 @@ def MoveAction(current_row, current_col, desired_row, desired_col, Direction):
             print("---------------------------------------------")
             for tile in TestField:
                 print(tile)
+
+        if Direction == "left":
+            TestField[current_row][current_col] = zewo
+            TestField[desired_row][desired_col] = little_bot
 
 MoveAction(current_row_index, current_col_index, target_row_pos, target_col_pos, Direction)
 
