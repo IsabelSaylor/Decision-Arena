@@ -24,7 +24,6 @@ direction_deltas = {
     "Right":(0, 1)
 }
 
-iteration = 0
 player = 2
 
 for tile in TestField:
@@ -43,7 +42,7 @@ def checkSpotAvailability():
 
         for row_index, row in enumerate(TestField):
             for col_index, tile in enumerate(row):
-                if tile == 2:
+                if tile == player:
                     target_row = row_index + delta_row
                     target_col = col_index + delta_col
 
@@ -63,9 +62,9 @@ def MoveAction(current_row, current_col, desired_row, desired_col, Direction):
         print(row)
 
 
-
 def EnemyMoveDirection():
     pass
+
 
 while True:
     time.sleep(1)
