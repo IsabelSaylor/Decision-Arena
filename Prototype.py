@@ -17,135 +17,50 @@ TestField = [
     [1, 1, 1, 1, 1, 1]
 ]
 
+direction_deltas = {
+    "Up": (-1, 0),
+    "Down":(1, 0),
+    "Left":(0, -1),
+    "Right":(0, 1)
+}
+
 iteration = 0
 player = 2
 
 for tile in TestField:
     print(tile)
 
+
 def MovementSelection():
-    choices = random.choice(['Left', 'Right', 'Up', 'Down'])
-    return choices
+    return random.choice(list(direction_deltas.keys()))
 
 
-def checkSpotAvailibility():
+def checkSpotAvailability():
     while True:
         time.sleep(1)
         Direction = MovementSelection()
-        if Direction == 'Right':
-            for row_index, row in enumerate(TestField):
-                for col_index, tile in enumerate(row):
-                    if tile == 2:
-                        print("Player at: ", row_index, col_index)
+        delta_row, delta_col = direction_deltas[Direction]
 
-                        target_row = row_index
-                        target_col = col_index + 1
+        for row_index, row in enumerate(TestField):
+            for col_index, tile in enumerate(row):
+                if tile == 2:
+                    target_row = row_index + delta_row
+                    target_col = col_index + delta_col
 
-                        if TestField[target_row][target_col] == 1:
-                            print("Bot Cannot Move here! It Retries.")
-                            continue
-                            
+                    if TestField[target_row][target_col] == 1:
+                        print(f"Bot cannot move {Direction}! Retrying...")
+                        break
+                    return target_row, target_col, row_index, col_index, Direction
 
-                        print("Target at: ", target_row, target_col)
-                        
-                        return target_row, target_col, row_index, col_index, Direction
-        
-        if Direction == "Down":
-            for row_index, row in enumerate(TestField):
-                for col_index, tile in enumerate(row):
-                    if tile == 2:
-                        print("Player at: ", row_index, col_index)
-
-                        target_row = row_index + 1
-                        target_col = col_index
-
-                        if TestField[target_row][target_col] == 1:
-                            print("Bot Cannot Move here! It Retries.")
-                            continue
-
-                        print("Target at: ", target_row, target_col)
-
-                        return target_row, target_col, row_index, col_index, Direction
-                    
-
-        if Direction == "Up":
-            for row_index, row in enumerate(TestField):
-                for col_index, tile in enumerate(row):
-                    if tile == 2:
-                        print("Player at: ", row_index, col_index)
-
-                        target_row = row_index - 1
-                        target_col = col_index 
-
-                        if TestField[target_row][target_col] == 1:
-                            print("Bot Cannot Move here! It Retries.")
-                            continue
-                            
-                        print("Target at: ", target_row, target_col)
-
-                        return target_row, target_col, row_index, col_index, Direction
-        
-        if Direction == "Left":
-            for row_index, row in enumerate(TestField):
-                for col_index, tile in enumerate(row):
-                    if tile == 2:
-                        print("Player at: ", row_index, col_index)
-
-                        target_row = row_index
-                        target_col = col_index - 1
-
-                        if TestField[target_row][target_col] == 1:
-                            print("Bot Cannot Move here! It Retries.")
-                            continue
-
-                        print("Target at: ", target_row, target_col)
-
-                        return target_row, target_col, row_index, col_index, Direction
-        
-
-#X, Y, Desired_X, Desired_Y Positions, Last variable is the Direction in which the bot moves.
-#target_row_pos, target_col_pos, current_row_index, current_col_index, Direction = checkSpotAvailibility()
-'''
-print(
-      "---------------------------------------------\n"
-      "TargetRowPos: " + str(target_row_pos) + "\n"
-      "TargetColPos: " + str(target_col_pos) + "\n"
-      "PreviousRowIndex: " + str(current_row_index) + "\n"
-      "PreviousDirection: " + str(current_col_index) + "\n"
-      "Direction: " + Direction
-      )
-'''
+  
 def MoveAction(current_row, current_col, desired_row, desired_col, Direction):
-        
-        zewo = 0
-        little_bot = 2
-
-        if Direction == "Right":
-            TestField[current_row][current_col] = zewo
-            TestField[desired_row][desired_col] = little_bot
-            print("---------------------------------------------")
-            for tile in TestField:
-                print(tile)
-
-        if Direction == "Down":
-            TestField[current_row][current_col] = zewo
-            TestField[desired_row][desired_col] = little_bot
-            print("---------------------------------------------")
-            for tile in TestField:
-                print(tile)
-
-        if Direction == "Up":
-            TestField[current_row][current_col] = zewo
-            TestField[desired_row][desired_col] = little_bot
-            print("---------------------------------------------")
-            for tile in TestField:
-                print(tile)
-
-        if Direction == "left":
-            TestField[current_row][current_col] = zewo
-            TestField[desired_row][desired_col] = little_bot
-            for tile in TestField:
-                print(tile)
+    
+    TestField[current_row][current_col] = 0
+    TestField[desired_row][desired_col] = 2
+    print(f"\nMoved {Direction}")
+    print("---------------------------------------------")
+    for row in TestField:
+        print(row)
 
 
 
@@ -153,11 +68,7 @@ def EnemyMoveDirection():
     pass
 
 while True:
-
-    MovementSelection()
-
     time.sleep(1)
-
-    target_row_pos, target_col_pos, current_row_index, current_col_index, Direction = checkSpotAvailibility()
-    MoveAction(current_row_index, current_col_index, target_row_pos, target_col_pos, Direction)
+    target_row, target_col, current_row, current_col, Direction = checkSpotAvailability()
+    MoveAction(current_row, current_col, target_row, target_col, Direction)
     
