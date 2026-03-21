@@ -25,6 +25,7 @@ direction_deltas = {
 }
 
 player = 2
+enemy = 3
 
 for tile in TestField:
     print(tile)
@@ -62,12 +63,29 @@ def MoveAction(current_row, current_col, desired_row, desired_col, Direction):
         print(row)
 
 
-def EnemyMoveDirection():
+def EnemyCheckSpotAvailability():
+    while True:
+        time.sleep(1)
+        Direction = MovementSelection()
+        delta_row, delta_col = direction_deltas[Direction]
+
+        for row_index, row in enumerate(TestField):
+            for col_index, tile in enumerate(row):
+                if tile == enemy:
+                    target_row = row_index + delta_row
+                    target_col = col_index + delta_col
+
+                    if TestField[target_row][target_col] == 1:
+                        print(f"Enemy cannot move {Direction}! Retrying...")
+                        break
+                    return target_row, target_col, row_index, col_index, Direction
+
+
+def EnemyMoveAction():
     pass
 
 
 while True:
     time.sleep(1)
     target_row, target_col, current_row, current_col, Direction = checkSpotAvailability()
-    MoveAction(current_row, current_col, target_row, target_col, Direction)
-    
+    MoveAction(current_row, current_col, target_row, target_col, Direction)   
