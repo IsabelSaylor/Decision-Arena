@@ -59,8 +59,7 @@ def MoveAction(current_row, current_col, desired_row, desired_col, Direction):
     TestField[desired_row][desired_col] = 2
     print(f"\nMoved {Direction}")
     print("---------------------------------------------")
-    for row in TestField:
-        print(row)
+    
 
 
 def EnemyCheckSpotAvailability():
@@ -81,11 +80,20 @@ def EnemyCheckSpotAvailability():
                     return target_row, target_col, row_index, col_index, Direction
 
 
-def EnemyMoveAction():
-    pass
-
+def EnemyMoveAction(current_row, current_col, desired_row, desired_col, Direction):
+    
+    TestField[current_row][current_col] = 0
+    TestField[desired_row][desired_col] = 3
+    print(f"\nMoved {Direction}")
+    print("---------------------------------------------")
+    
 
 while True:
     time.sleep(1)
     target_row, target_col, current_row, current_col, Direction = checkSpotAvailability()
-    MoveAction(current_row, current_col, target_row, target_col, Direction)   
+    target_row_enemy, target_col_enemy, current_row_enemy, current_col_enemy, Direction_enemy = EnemyCheckSpotAvailability()
+
+    EnemyMoveAction(current_row_enemy, current_col_enemy, target_row_enemy, target_col_enemy, Direction_enemy)
+    MoveAction(current_row, current_col, target_row, target_col, Direction) 
+    for row in TestField:
+        print(row)  
