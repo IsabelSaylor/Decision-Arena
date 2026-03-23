@@ -58,18 +58,21 @@ def checkSpotAvailability():
 
                     if TestField[target_row][target_col] == 1:
                         print(f"Bot cannot move {Direction}! Retrying...")
-                        break 
+                        break
+
+                    if TestField[target_row][target_col] == enemy.symbol:
+                        pass
+
                     return target_row, target_col, row_index, col_index, Direction
 
-  
+
 def MoveAction(current_row, current_col, desired_row, desired_col, Direction):
     
     TestField[current_row][current_col] = 0
     TestField[desired_row][desired_col] = bot.symbol
-    print(f"\nMoved {Direction}")
+    print(f"\nBot Moved {Direction}")
     print("---------------------------------------------")
     
-
 
 def EnemyCheckSpotAvailability():
     while True:
@@ -93,7 +96,7 @@ def EnemyMoveAction(current_row, current_col, desired_row, desired_col, Directio
     
     TestField[current_row][current_col] = 0
     TestField[desired_row][desired_col] = enemy.symbol
-    print(f"\nMoved {Direction}")
+    print(f"\nEnemy Moved {Direction}")
     print("---------------------------------------------")
     
 
