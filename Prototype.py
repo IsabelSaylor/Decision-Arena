@@ -24,8 +24,8 @@ direction_deltas = {
     "Right":(0, 1)
 }
 
-attack_options = ["hit", "block"]
-#weighted_attack_options = random.choices(attack_options, weights=())
+attack_options = ["hit", "block", "evade"]
+weighted_attack_options = random.choices(attack_options, weights=(3, 6, 3))
 
 class Entity:
     
@@ -38,10 +38,12 @@ class Entity:
         self.defense = defense
 
     def DealDamage(self, defender, damage):
-        self.hp -= damage
+        defender.TakeDamage(damage)
         pass
 
     def TakeDamage(self, damage):
+        self.hp -= damage
+        print(f"{self.name} has taken {damage} Damage!")
         pass
 
 bot = Entity(name="Bot", hp=100, row=1, col=1, symbol=2, defense=5)
@@ -72,15 +74,28 @@ def checkSpotAvailability():
                         break
 
                     if TestField[target_row][target_col] == enemy.symbol:
-                        pass
+                        print(str(row_index) + " | " + str(col_index))
+                        TestField[row_index][col_index] == bot.symbol
+                        TestField[target_row][target_col] = enemy.symbol
+                        fightAction(bot.name, enemy.name)
+
+                        break
 
                     return target_row, target_col, row_index, col_index, Direction
 
 
 def fightAction(bot, enemy):
     print(f"{bot} is fighting {enemy}")
+
+    choice = weighted_attack_options
+
+    print(choice)
+
+    for row in TestField:
+        print(row)
+    time.sleep(2)  
     
-    pass
+
 
 def MoveAction(current_row, current_col, desired_row, desired_col, Direction):
     
@@ -105,6 +120,14 @@ def EnemyCheckSpotAvailability():
                     if TestField[target_row][target_col] == 1:
                         print(f"Enemy cannot move {Direction}! Retrying...")
                         break
+
+                    if TestField[target_row][target_col] == bot.symbol:
+                        
+                        TestField[row_index][col_index] = enemy.symbol
+                        TestField[target_row][target_col] == bot.symbol
+
+                        break
+
                     return target_row, target_col, row_index, col_index, Direction
 
 
@@ -117,11 +140,12 @@ def EnemyMoveAction(current_row, current_col, desired_row, desired_col, Directio
     
 
 while True: 
-    time.sleep(1)
+    time.sleep(2.5)
     target_row, target_col, current_row, current_col, Direction = checkSpotAvailability()
     target_row_enemy, target_col_enemy, current_row_enemy, current_col_enemy, Direction_enemy = EnemyCheckSpotAvailability()
-
-    EnemyMoveAction(current_row_enemy, current_col_enemy, target_row_enemy, target_col_enemy, Direction_enemy)
+    
     MoveAction(current_row, current_col, target_row, target_col, Direction)
+    EnemyMoveAction(current_row_enemy, current_col_enemy, target_row_enemy, target_col_enemy, Direction_enemy)
+    
     for row in TestField:
         print(row)  
