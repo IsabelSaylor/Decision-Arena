@@ -107,6 +107,7 @@ def fightAction(bot, enemy):
         if weighted_defend_options == "take_damage":
             bot.DealDamage(enemy, 5)
             print(f"Enemy has {enemy.hp} HP left.")
+            
 
     for row in TestField:
         print(row)
