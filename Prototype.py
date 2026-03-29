@@ -40,29 +40,48 @@ class Entity:
         self.defense = defense
         self.hit_chance_self = hit_chance_self
 
-    def DealDamage(self, defender, damage):
-        defender.TakeDamage(damage)
-        pass
+    def move(self, d_row, d_col):
+        self.row += d_row
+        self.col += d_col
 
     def TakeDamage(self, damage):
         self.hp -= damage
-        print(f"{self.name} has taken {damage} Damage!")
-        pass
+
 
 class MLBot:
     
     def __init__(self, model):
         self.model = model
 
-    def decide(self, state, targets):
+    def decide(self, state):
+        return self.model.predict(state)
+        
 
-        return self.model.predict(state, targets)
+class EnemyBrain:
     
-class Enemy:
-    pass
+    def decide(self, self_entity, target):
+
+        dr = target.row - self_entity.row # vertical distance (down/up)
+        dc = target.col - self_entity.col # horizontal distance (right/left)
+
+        # Default: no movement
+        step_row = 0
+        step_col = 0
+
+        # If target is above or below, move vertically toward it
+        if dr != 0:
+            step_row = 1 if dr > 0 else -1
+
+        # If target is left or right, move horizontally toward it
+        if dc != 0:
+            step_col = 1 if dc > 0 else -1
 
 bot = Entity(name="Bot", hp=100, row=1, col=1, symbol=2, defense=5, hit_chance_self=7)
 enemy = Entity(name="Enemy", hp=50, row=1, col=2, symbol=3, defense=0, hit_chance_self=10)
+
+
+def DealDamage(attacker, defender, damage):
+    defender.TakeDamage(damage)
 
 
 TestField[bot.row][bot.col] = bot.symbol
