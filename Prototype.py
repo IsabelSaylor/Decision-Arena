@@ -26,7 +26,7 @@ direction_deltas = {
 
 defend_options = ["block", "take_damage"]
 attack_options = ["hit", "walk"]
-weighted_attack_options = random.choices(attack_options, weights=(3, 6))
+weighted_attack_options = random.choices(attack_options, weights=(10, 0))
 
 
 class Entity:
@@ -41,7 +41,6 @@ class Entity:
         self.hit_chance_self = hit_chance_self
 
     def DealDamage(self, defender, damage):
-        print("damage is in fact being done")
         defender.TakeDamage(damage)
         pass
 
@@ -50,12 +49,27 @@ class Entity:
         print(f"{self.name} has taken {damage} Damage!")
         pass
 
+class MLBot:
+    
+    def __init__(self, model):
+        self.model = model
+
+    def decide(self, state, targets):
+
+        return self.model.predict(state, targets)
+    
+class Enemy:
+    pass
+
 bot = Entity(name="Bot", hp=100, row=1, col=1, symbol=2, defense=5, hit_chance_self=7)
-enemy = Entity(name="Enemy", hp=50, row=3, col=4, symbol=3, defense=8, hit_chance_self=10)
+enemy = Entity(name="Enemy", hp=50, row=1, col=2, symbol=3, defense=0, hit_chance_self=10)
+
 
 TestField[bot.row][bot.col] = bot.symbol
 TestField[enemy.row][enemy.col] = enemy.symbol
 
+for row in TestField:
+    print(row)
 
 def MovementSelection():
     return random.choice(list(direction_deltas.keys()))
@@ -63,10 +77,13 @@ def MovementSelection():
 
 def checkSpotAvailability():
     while True:
-        time.sleep(1)
+        #time.sleep(1)
         Direction = MovementSelection()
         delta_row, delta_col = direction_deltas[Direction]
 
+
+
+        """
         for row_index, row in enumerate(TestField):
             for col_index, tile in enumerate(row):
                 if tile == bot.symbol:
@@ -82,38 +99,12 @@ def checkSpotAvailability():
                         TestField[row_index][col_index] == bot.symbol
                         TestField[target_row][target_col] = enemy.symbol
 
-                        fightAction(bot, enemy)
+                        botfightAction(bot, enemy)
 
                         break
 
                     return target_row, target_col, row_index, col_index, Direction
-
-
-def fightAction(bot, enemy):
-    print(f"{bot.name} is fighting {enemy.name}")
-
-    bot_choice = weighted_attack_options
-    enemy_choice = weighted_attack_options
-
-    
-    if bot_choice == "hit":
-
-        weighted_defend_options = random.choices(defend_options, weights=(enemy.defense, enemy.hit_chance_self))
-        
-        if weighted_defend_options == "block":
-            print(f"Enemy has {enemy.hp}! Attack was blocked!")
-            time.sleep(1)
-
-        if weighted_defend_options == "take_damage":
-            bot.DealDamage(enemy, 5)
-            print(f"Enemy has {enemy.hp} HP left.")
-            
-
-    for row in TestField:
-        print(row)
-    time.sleep(2)  
-    
-
+"""
 
 def MoveAction(current_row, current_col, desired_row, desired_col, Direction):
     
@@ -125,7 +116,7 @@ def MoveAction(current_row, current_col, desired_row, desired_col, Direction):
 
 def EnemyCheckSpotAvailability():
     while True:
-        time.sleep(1)
+        #time.sleep(1)
         Direction = MovementSelection()
         delta_row, delta_col = direction_deltas[Direction]
 
@@ -155,10 +146,46 @@ def EnemyMoveAction(current_row, current_col, desired_row, desired_col, Directio
     TestField[desired_row][desired_col] = enemy.symbol
     print(f"\nEnemy Moved {Direction}")
     print("---------------------------------------------")
+
+   
+def botfightAction(bot, enemy):
+    print(f"{bot.name} is fighting {enemy.name}")
+
+    bot_choice = weighted_attack_options
+    enemy_choice = weighted_attack_options
+    print(str(bot_choice) + " | Bot Pick")
+    print(str(enemy_choice) + " | Enemy Pick")
+
+
     
+    if bot_choice or enemy_choice == "hit":
+
+        weighted_defend_options = random.choices(defend_options, weights=(enemy.defense, enemy.hit_chance_self))
+        
+        
+        
+        if weighted_defend_options[0] == "block":
+            
+            print(f"Enemy has {enemy.hp}! Attack was blocked!")
+            time.sleep(1)
+
+        if weighted_defend_options[0] == "take_damage":
+            
+            bot.DealDamage(enemy, 5)
+
+            if enemy.hp < 0:
+                print(f"{enemy.name} is dead!")
+                del enemy
+            else:    
+                print(f"Enemy has {enemy.hp} HP left.")
+
+
+    for row in TestField:
+        print(row)
+    time.sleep(2)  
 
 while True: 
-    time.sleep(2.5)
+    #time.sleep(2.5)
     target_row, target_col, current_row, current_col, Direction = checkSpotAvailability()
     target_row_enemy, target_col_enemy, current_row_enemy, current_col_enemy, Direction_enemy = EnemyCheckSpotAvailability()
     
