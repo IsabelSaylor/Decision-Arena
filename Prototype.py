@@ -25,7 +25,7 @@ direction_deltas = {
 }
 
 defend_options = ["block", "take_damage"]
-attack_options = ["hit", "walk"]
+attack_options = ["hit", "run"]
 weighted_attack_options = random.choices(attack_options, weights=(10, 0))
 
 
@@ -46,6 +46,7 @@ class Entity:
 
     def TakeDamage(self, damage):
         self.hp -= damage
+        print(str(self.hp) + self.name)
 
 
 class MLBot:
@@ -138,32 +139,6 @@ def MoveAction(current_row, current_col, desired_row, desired_col, Direction):
     print("---------------------------------------------")
     
 
-def EnemyCheckSpotAvailability():
-    while True:
-        #time.sleep(1)
-        Direction = MovementSelection()
-        delta_row, delta_col = direction_deltas[Direction]
-
-        for row_index, row in enumerate(TestField):
-            for col_index, tile in enumerate(row):
-                if tile == enemy.symbol:
-                    target_row = row_index + delta_row
-                    target_col = col_index + delta_col
-
-                    if TestField[target_row][target_col] == 1:
-                        print(f"Enemy cannot move {Direction}! Retrying...")
-                        break
-
-                    if TestField[target_row][target_col] == bot.symbol:
-                        
-                        TestField[row_index][col_index] = enemy.symbol
-                        TestField[target_row][target_col] == bot.symbol
-
-                        break
-
-                    return target_row, target_col, row_index, col_index, Direction
-
-
 def EnemyMoveAction(current_row, current_col, desired_row, desired_col, Direction):
     
     TestField[current_row][current_col] = 0
@@ -171,47 +146,20 @@ def EnemyMoveAction(current_row, current_col, desired_row, desired_col, Directio
     print(f"\nEnemy Moved {Direction}")
     print("---------------------------------------------")
 
-   
-def botfightAction(bot, enemy):
-    print(f"{bot.name} is fighting {enemy.name}")
 
-    bot_choice = weighted_attack_options
-    enemy_choice = weighted_attack_options
-    print(str(bot_choice) + " | Bot Pick")
-    print(str(enemy_choice) + " | Enemy Pick")
-
-
+def fightAction(Entity1, Entity2):
     
-    if bot_choice or enemy_choice == "hit":
+    attack_pick = weighted_attack_options
+    print(attack_pick)
 
-        weighted_defend_options = random.choices(defend_options, weights=(enemy.defense, enemy.hit_chance_self))
-        
-        
-        
-        if weighted_defend_options[0] == "block":
-            
-            print(f"Enemy has {enemy.hp}! Attack was blocked!")
-            time.sleep(1)
-
-        if weighted_defend_options[0] == "take_damage":
-            
-            bot.DealDamage(enemy, 5)
-
-            if enemy.hp < 0:
-                print(f"{enemy.name} is dead!")
-                del enemy
-            else:    
-                print(f"Enemy has {enemy.hp} HP left.")
+    if attack_pick[0] == "hit":
+        DealDamage(Entity1, Entity2, 10)
+        pass
 
 
-    for row in TestField:
-        print(row)
-    time.sleep(2)  
-
-while True:
-    time.sleep(2.5)
+def EnemyMovement():
     step_row, step_col = enemy_brain.decide(enemy, bot)
-    
+        
     new_row = enemy.row + step_row
     new_col = enemy.col + step_col
 
@@ -227,33 +175,34 @@ while True:
         # tile is blocked
         pass
     elif tile == bot.symbol:
-        # combat system
-        pass
+        print(fightAction(enemy, bot))
+        
+        
     elif tile == 0:
         # allowed to move
         TestField[old_row][old_col] = 0
         TestField[new_row][new_col] = enemy.symbol
-        
-        pass
+
+        # updates enemy position
+        enemy.row = new_row
+        enemy.col = new_col
+            
     elif tile == 4:
         print("test item picked up")
         TestField[old_row][old_col] = 0
         TestField[new_row][new_col] = enemy.symbol
 
+        # updates enemy position
+        enemy.row = new_row
+        enemy.col = new_col
+        
     for row in TestField:
         print(row)
 
-    
 
-"""
-while True: 
-    #time.sleep(2.5)
-    target_row, target_col, current_row, current_col, Direction = checkSpotAvailability()
-    target_row_enemy, target_col_enemy, current_row_enemy, current_col_enemy, Direction_enemy = EnemyCheckSpotAvailability()
-    
-    MoveAction(current_row, current_col, target_row, target_col, Direction)
-    EnemyMoveAction(current_row_enemy, current_col_enemy, target_row_enemy, target_col_enemy, Direction_enemy)
-    
-    for row in TestField:
-        print(row)
-"""        
+def AgentMovement():
+    pass
+
+while True:
+    time.sleep(2.5)
+    EnemyMovement()
