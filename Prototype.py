@@ -58,37 +58,42 @@ class MLBot:
         
 
 class EnemyBrain:
-    
+
     def decide(self, self_entity, target):
 
-        dr = target.row - self_entity.row # vertical distance (down/up)
-        dc = target.col - self_entity.col # horizontal distance (right/left)
+        dr = target.row - self_entity.row
+        dc = target.col - self_entity.col
 
-        # Default: no movement
         step_row = 0
         step_col = 0
 
-        # If target is above or below, move vertically toward it
-        if dr != 0:
+        # If vertical distance is bigger, move vertically
+        if abs(dr) > abs(dc):
             step_row = 1 if dr > 0 else -1
 
-        # If target is left or right, move horizontally toward it
-        if dc != 0:
+        # Otherwise move horizontally
+        elif dc != 0:
             step_col = 1 if dc > 0 else -1
 
-bot = Entity(name="Bot", hp=100, row=1, col=1, symbol=2, defense=5, hit_chance_self=7)
-enemy = Entity(name="Enemy", hp=50, row=1, col=2, symbol=3, defense=0, hit_chance_self=10)
+        # If perfectly aligned vertically, still allow horizontal fallback only if needed
+        elif dr == 0 and dc != 0:
+            step_col = 1 if dc > 0 else -1
 
+        return step_row, step_col
+
+bot = Entity(name="Bot", hp=100, row=1, col=1, symbol=2, defense=5, hit_chance_self=7)
+enemy = Entity(name="Enemy", hp=50, row=4, col=4, symbol=3, defense=0, hit_chance_self=10)
+
+enemy_brain = EnemyBrain()
 
 def DealDamage(attacker, defender, damage):
     defender.TakeDamage(damage)
 
 
+
 TestField[bot.row][bot.col] = bot.symbol
 TestField[enemy.row][enemy.col] = enemy.symbol
 
-for row in TestField:
-    print(row)
 
 def MovementSelection():
     return random.choice(list(direction_deltas.keys()))
@@ -203,6 +208,44 @@ def botfightAction(bot, enemy):
         print(row)
     time.sleep(2)  
 
+while True:
+    time.sleep(2.5)
+    step_row, step_col = enemy_brain.decide(enemy, bot)
+    
+    new_row = enemy.row + step_row
+    new_col = enemy.col + step_col
+
+    old_row = enemy.row
+    old_col = enemy.col
+
+
+    # Read the tile to ensure we can move into position
+    tile = TestField[new_row][new_col]
+
+
+    if tile == 1:
+        # tile is blocked
+        pass
+    elif tile == bot.symbol:
+        # combat system
+        pass
+    elif tile == 0:
+        # allowed to move
+        TestField[old_row][old_col] = 0
+        TestField[new_row][new_col] = enemy.symbol
+        
+        pass
+    elif tile == 4:
+        print("test item picked up")
+        TestField[old_row][old_col] = 0
+        TestField[new_row][new_col] = enemy.symbol
+
+    for row in TestField:
+        print(row)
+
+    
+
+"""
 while True: 
     #time.sleep(2.5)
     target_row, target_col, current_row, current_col, Direction = checkSpotAvailability()
@@ -213,3 +256,4 @@ while True:
     
     for row in TestField:
         print(row)
+"""        
