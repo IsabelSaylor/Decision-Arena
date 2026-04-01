@@ -9,12 +9,16 @@ Simulated Map
     4 = item
 """
 TestField = [
-    [1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 1],
-    [1, 0, 4, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1]
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+    [1, 0, 0, 0, 0, 1, 0, 0, 0, 1,],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1,],
+    [1, 0, 0, 0, 0, 1, 0, 0, 0, 1,],
+    [1, 0, 4, 0, 0, 1, 0, 0, 0, 1,],
+    [1, 1, 0, 0, 1, 1, 0, 0, 0, 1,],
+    [1, 0, 0, 0, 0, 1, 0, 0, 0, 1,],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1,],
+    [1, 0, 0, 0, 0, 1, 0, 0, 0, 1,],
+    [1, 0, 0, 0, 0, 1, 1, 1, 1, 1,]
 ]
 
 direction_deltas = {
@@ -62,6 +66,7 @@ class EnemyBrain:
 
     def decide(self, self_entity, target):
 
+        # Delta row and delta col
         dr = target.row - self_entity.row
         dc = target.col - self_entity.col
 
@@ -81,9 +86,15 @@ class EnemyBrain:
             step_col = 1 if dc > 0 else -1
 
         return step_row, step_col
+    
+    def is_walkable(row, col):
 
-bot = Entity(name="Bot", hp=100, row=1, col=1, symbol=2, defense=5, hit_chance_self=7)
-enemy = Entity(name="Enemy", hp=50, row=4, col=4, symbol=3, defense=0, hit_chance_self=10)
+        
+
+        pass
+
+bot = Entity(name="Bot", hp=100, row=1, col=1, symbol=2, defense=5, chance_to_get_hit=7)
+enemy = Entity(name="Enemy", hp=50, row=8, col=8, symbol=3, defense=0, chance_to_get_hit=10)
 
 enemy_brain = EnemyBrain()
 
@@ -98,53 +109,6 @@ TestField[enemy.row][enemy.col] = enemy.symbol
 
 def MovementSelection():
     return random.choice(list(direction_deltas.keys()))
-
-
-def checkSpotAvailability():
-    while True:
-        #time.sleep(1)
-        Direction = MovementSelection()
-        delta_row, delta_col = direction_deltas[Direction]
-
-
-
-        """
-        for row_index, row in enumerate(TestField):
-            for col_index, tile in enumerate(row):
-                if tile == bot.symbol:
-                    target_row = row_index + delta_row
-                    target_col = col_index + delta_col
-
-                    if TestField[target_row][target_col] == 1:
-                        print(f"Bot cannot move {Direction}! Retrying...")
-                        break
-
-                    if TestField[target_row][target_col] == enemy.symbol:
-                        print(str(row_index) + " | " + str(col_index))
-                        TestField[row_index][col_index] == bot.symbol
-                        TestField[target_row][target_col] = enemy.symbol
-
-                        botfightAction(bot, enemy)
-
-                        break
-
-                    return target_row, target_col, row_index, col_index, Direction
-"""
-
-def MoveAction(current_row, current_col, desired_row, desired_col, Direction):
-    
-    TestField[current_row][current_col] = 0
-    TestField[desired_row][desired_col] = bot.symbol
-    print(f"\nBot Moved {Direction}")
-    print("---------------------------------------------")
-    
-
-def EnemyMoveAction(current_row, current_col, desired_row, desired_col, Direction):
-    
-    TestField[current_row][current_col] = 0
-    TestField[desired_row][desired_col] = enemy.symbol
-    print(f"\nEnemy Moved {Direction}")
-    print("---------------------------------------------")
 
 
 def fightAction(Entity1, Entity2):
@@ -172,8 +136,9 @@ def EnemyMovement():
 
 
     if tile == 1:
-        # tile is blocked
+        EnemyBrain.is_walkable(old_row, old_col)
         pass
+
     elif tile == bot.symbol:
         print(fightAction(enemy, bot))
         
