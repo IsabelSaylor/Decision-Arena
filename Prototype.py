@@ -35,14 +35,14 @@ weighted_attack_options = random.choices(attack_options, weights=(10, 0))
 
 class Entity:
     
-    def __init__(self, name, hp, row, col, symbol, defense, hit_chance_self):
+    def __init__(self, name, hp, row, col, symbol, defense, chance_to_get_hit):
         self.name = name
         self.hp = hp
         self.row = row
         self.col = col
         self.symbol = symbol
         self.defense = defense
-        self.hit_chance_self = hit_chance_self
+        self.chance_to_get_hit = chance_to_get_hit
 
     def move(self, d_row, d_col):
         self.row += d_row
@@ -62,36 +62,39 @@ class MLBot:
         return self.model.predict(state)
         
 
+def is_walkable(x, y):
+    return TestField[x][y] == 0
+
+
 class EnemyBrain:
 
     def decide(self, self_entity, target):
 
-        # Delta row and delta col
+        #delta row and delta column
         dr = target.row - self_entity.row
         dc = target.col - self_entity.col
 
-        step_row = 0
-        step_col = 0
-
-        # If vertical distance is bigger, move vertically
+        #s
         if abs(dr) > abs(dc):
-            step_row = 1 if dr > 0 else -1
+            step_row, step_col = (1 if dr > 0 else -1), 0
+            alt_row, alt_col = 0, (1 if dc > 0 else -1)
+        else:
+            step_row, step_col = 0, (1 if dc > 0 else -1)
+            alt_row, alt_col = (1 if dr > 0 else -1), 0
 
-        # Otherwise move horizontally
-        elif dc != 0:
-            step_col = 1 if dc > 0 else -1
+        new_r = self_entity.row + step_row
+        new_c = self_entity.col + step_col
 
-        # If perfectly aligned vertically, still allow horizontal fallback only if needed
-        elif dr == 0 and dc != 0:
-            step_col = 1 if dc > 0 else -1
+        if is_walkable(new_r, new_c):
+            return step_row, step_col
 
-        return step_row, step_col
-    
-    def is_walkable(row, col):
+        new_r = self_entity.row + alt_row
+        new_c = self_entity.col + alt_col
 
-        
+        if is_walkable(new_r, new_c):
+            return alt_row, alt_col
 
-        pass
+        return 0, 0
 
 bot = Entity(name="Bot", hp=100, row=1, col=1, symbol=2, defense=5, chance_to_get_hit=7)
 enemy = Entity(name="Enemy", hp=50, row=8, col=8, symbol=3, defense=0, chance_to_get_hit=10)
